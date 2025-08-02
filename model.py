@@ -16,8 +16,8 @@ class DynamicGroundingDINO:
     """
     Grounding DINO model for zero-shot object detection with text queries.
     """
-    
-    def __init__(self, model_id: str = "IDEA-Research/grounding-dino-tiny", device: str = "auto"):
+
+    def __init__(self, model_id: str = "./models", device: str = "auto"):
         """
         Initialize the Grounding DINO model
 
@@ -346,7 +346,7 @@ class ModelManager:
             cls._instance = super(ModelManager, cls).__new__(cls)
         return cls._instance
 
-    def get_model(self, model_id: str = "IDEA-Research/grounding-dino-tiny", device: str = "auto") -> DynamicGroundingDINO:
+    def get_model(self, model_id: str = "./models", device: str = "auto") -> DynamicGroundingDINO:
         """Get or create model instance"""
         if self._model is None:
             self._model = DynamicGroundingDINO(model_id=model_id, device=device)
