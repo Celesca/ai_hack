@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  grounding-dino-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grounding-dino-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TRANSFORMERS_CACHE=/app/cache/transformers
+      - HF_HOME=/app/cache/huggingface
+    volumes:
+      # Mount cache directories to persist model downloads
+      - model_cache:/app/cache
+      # Optional: Mount local images directory for testing
+      - ./images:/app/images:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+    networks:
+      - grounding-dino-network
+
+  # Optional: Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: grounding-dino-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro  # Optional SSL certificates
+    depends_on:
+      - grounding-dino-api
+    restart: unless-stopped
+    networks:
+      - grounding-dino-network
+    profiles:
+      - production
+
+  # Optional: Redis for caching (future enhancement)
+  redis:
+    image: redis:7-alpine
+    container_name: grounding-dino-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - grounding-dino-network
+    profiles:
+      - cache
+
+volumes:
+  model_cache:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  grounding-dino-network:
+    driver: bridge

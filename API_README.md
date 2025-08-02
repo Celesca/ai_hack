@@ -14,14 +14,52 @@ A FastAPI service for zero-shot object detection using the Grounding DINO model.
 ## Project Structure
 
 ```
-├── model.py           # DynamicGroundingDINO model class and ModelManager
-├── server.py          # FastAPI server implementation
-├── requirements.txt   # Python dependencies
-├── test_api.py       # API test script
-└── README.md         # This file
+├── model.py              # DynamicGroundingDINO model class and ModelManager
+├── server.py             # FastAPI server implementation
+├── requirements.txt      # Python dependencies
+├── test_api.py          # API test script
+├── Dockerfile           # Docker container configuration
+├── docker-compose.yml   # Production Docker Compose setup
+├── docker-compose.dev.yml # Development Docker Compose setup
+├── nginx.conf           # Nginx reverse proxy configuration
+├── deploy.sh           # Linux/Mac deployment script
+├── deploy.bat          # Windows deployment script
+├── .dockerignore       # Docker build context exclusions
+├── DOCKER_README.md    # Comprehensive Docker deployment guide
+└── API_README.md       # This file
 ```
 
 ## Installation
+
+### Option 1: Docker Deployment (Recommended)
+
+The easiest way to run the service is using Docker:
+
+1. **Install Docker Desktop** from [docker.com](https://www.docker.com/products/docker-desktop/)
+
+2. **Quick start with deployment script**:
+
+   **Windows:**
+   ```bash
+   deploy.bat
+   ```
+
+   **Linux/Mac:**
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+3. **Or use Docker Compose directly**:
+   ```bash
+   docker-compose up -d
+   ```
+
+The API will be available at `http://localhost:8000`
+
+📖 **See [DOCKER_README.md](DOCKER_README.md) for complete Docker deployment guide**
+
+### Option 2: Local Python Installation
 
 1. **Clone or download the project files**
 

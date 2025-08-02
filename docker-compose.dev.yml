@@ -1,0 +1,35 @@
+# Development docker-compose for local development
+version: '3.8'
+
+services:
+  grounding-dino-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grounding-dino-api-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TRANSFORMERS_CACHE=/app/cache/transformers
+      - HF_HOME=/app/cache/huggingface
+      # Development environment variables
+      - ENVIRONMENT=development
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - model_cache:/app/cache
+      # Mount local images for testing
+      - ./images:/app/images:ro
+    restart: unless-stopped
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    networks:
+      - grounding-dino-dev-network
+
+volumes:
+  model_cache:
+    driver: local
+
+networks:
+  grounding-dino-dev-network:
+    driver: bridge
